@@ -1,0 +1,21 @@
+.info {
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+}
+
+.info h2 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.info p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.status {
+  color: var(--accent);
+  font-weight: 600;
+}

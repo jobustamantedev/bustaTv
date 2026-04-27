@@ -54,3 +54,7 @@ Thumbs.db
 # Cache
 .cache/
 .pytest_cache/
+
+# Database
+*.db
+bustaTv.db

@@ -1,0 +1,62 @@
+.card {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  background: var(--bg-card);
+  border: 2px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--accent);
+}
+
+.card.selected {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.liveIndicator {
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.liveBadge {
+  color: #CC0000;
+  animation: pulse 2s infinite;
+}
+
+.offlineBadge {
+  color: #606060;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  margin-left: auto;
+}
+
+.name {
+  flex: 1;
+  text-align: left;
+  font-weight: 500;
+}

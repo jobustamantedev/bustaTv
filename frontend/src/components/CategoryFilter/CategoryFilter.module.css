@@ -1,0 +1,29 @@
+.filter {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  color: var(--text-primary);
+}
+
+.btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
