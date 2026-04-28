@@ -1,10 +1,10 @@
-# bustaTv
+# localTv
 
 Una plataforma web de streaming de contenido en vivo, similar a Míralo TV.
 
 ## 📋 Descripción
 
-bustaTv es un agregador web de streams de contenido en vivo. Permite visualizar múltiples canales de TV, filtrar por categorías y acceder a un panel administrativo para gestionar los canales disponibles.
+localTv es un agregador web de streams de contenido en vivo. Permite visualizar múltiples canales de TV, filtrar por categorías y acceder a un panel administrativo para gestionar los canales disponibles.
 
 ## 🎯 Características
 
@@ -18,7 +18,7 @@ bustaTv es un agregador web de streams de contenido en vivo. Permite visualizar 
 ## 🏗️ Arquitectura
 
 ```
-bustaTv/
+localTv/
 ├── backend/                    # API FastAPI + SQLite
 │   ├── app/
 │   │   ├── models/            # Modelos de datos

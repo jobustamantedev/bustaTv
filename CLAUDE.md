@@ -1,8 +1,8 @@
-# bustaTv Development Guide
+# localTv Development Guide
 
 ## Project Overview
 
-bustaTv is a web streaming platform for live TV content, built for educational purposes. It features a React frontend with Vite, a FastAPI backend, and SQLite database. This guide helps developers understand the project architecture and how to contribute.
+localTv is a web streaming platform for live TV content, built for educational purposes. It features a React frontend with Vite, a FastAPI backend, and SQLite database. This guide helps developers understand the project architecture and how to contribute.
 
 **Status**: Phase 5 Complete - Integration, Testing, and Documentation Finalized
 
@@ -43,7 +43,7 @@ Client Browser (http://localhost:5173)
   (http://localhost:8000)
            ↓
        SQLite DB
-   (bustaTv.db)
+   (localTv.db)
 ```
 
 ### Key Decisions
@@ -56,7 +56,7 @@ Client Browser (http://localhost:5173)
 ## Project Structure
 
 ```
-bustaTv/
+localTv/
 ├── backend/
 │   ├── app/
 │   │   ├── models/              # SQLAlchemy models
@@ -397,7 +397,7 @@ app.add_middleware(
 
 **Solution**: SQLite is single-writer. In development, this shouldn't happen. If it does:
 - Stop the server
-- Delete `bustaTv.db`
+- Delete `localTv.db`
 - Restart
 
 ### Issue: "Module not found" in backend
@@ -421,7 +421,7 @@ npm install
 ### Backend (.env)
 
 ```
-DATABASE_URL=sqlite:///./bustaTv.db
+DATABASE_URL=sqlite:///./localTv.db
 SECRET_API_KEY=bustatv-dev-secret-key-changeme
 ```
 
