@@ -1,0 +1,54 @@
+.castButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.castButton:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.castButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.castButton.active {
+  background-color: #ea4335;
+  border-color: #ea4335;
+  box-shadow: 0 0 8px rgba(234, 67, 53, 0.5);
+}
+
+.castButton.active:hover {
+  background-color: #d33425;
+  border-color: #d33425;
+}
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #fff;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

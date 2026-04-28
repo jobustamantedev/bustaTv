@@ -7,9 +7,12 @@ export default function ChannelCard({ channel, isSelected, onSelect, isFavorite,
   };
 
   return (
-    <button
+    <div
       className={`${styles.card} ${isSelected ? styles.selected : ''}`}
       onClick={onSelect}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && onSelect()}
       aria-pressed={isSelected}
     >
       <div className={styles.content}>
@@ -28,6 +31,6 @@ export default function ChannelCard({ channel, isSelected, onSelect, isFavorite,
           </button>
         )}
       </div>
-    </button>
+    </div>
   );
 }

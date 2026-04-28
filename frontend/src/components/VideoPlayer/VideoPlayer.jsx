@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import CastButton from '../CastButton/CastButton';
 import styles from './VideoPlayer.module.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
@@ -8,6 +9,7 @@ export default function VideoPlayer({ channel }) {
   const clapprRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [streamUrl, setStreamUrl] = useState(null);
 
   useEffect(() => {
     if (!channel?.slug) {
@@ -58,6 +60,7 @@ export default function VideoPlayer({ channel }) {
 
         const data = await response.json();
         const realStreamUrl = data.url;
+        setStreamUrl(realStreamUrl);
 
         // Crear nueva instancia de Clappr con la URL real del m3u8
         if (window.Clappr) {
@@ -111,6 +114,16 @@ export default function VideoPlayer({ channel }) {
   return (
     <div className={styles.playerWrapper}>
       <div id="video-player" ref={playerRef} className={styles.player} />
+      {channel && streamUrl && (
+        <div className={styles.controls}>
+          <CastButton
+            streamUrl={streamUrl}
+            channelName={channel.name}
+            logoUrl={channel.logo_url}
+            loading={loading}
+          />
+        </div>
+      )}
       {!channel && (
         <div className={styles.placeholder}>
           <p>Selecciona un canal para ver el stream</p>
