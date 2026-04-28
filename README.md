@@ -1,19 +1,24 @@
 # localTv
 
-Una plataforma web de streaming de contenido en vivo, similar a Míralo TV.
+Una plataforma web de streaming de contenido en vivo con eventos deportivos integrados, accesible desde cualquier dispositivo en tu red.
 
 ## 📋 Descripción
 
-localTv es un agregador web de streams de contenido en vivo. Permite visualizar múltiples canales de TV, filtrar por categorías y acceder a un panel administrativo para gestionar los canales disponibles.
+localTv es un agregador web de streams de contenido en vivo que permite visualizar múltiples canales de TV, filtrar por categorías, ver eventos del día y acceder a un panel administrativo para gestionar los canales. Diseñado para ser accesible desde Smart TVs, tablets y otros dispositivos en tu red local.
 
 ## 🎯 Características
 
-- ✅ Interfaz web responsive y moderna
-- ✅ Lista de canales en vivo (10+ canales predefinidos)
-- ✅ Filtrado por categorías (Deportes, Películas, Series, Noticias, etc.)
-- ✅ Panel administrativo para gestionar canales
+- ✅ Interfaz web limpia y centrada en el contenido
+- ✅ Lista de canales en vivo (100+ canales disponibles)
+- ✅ Búsqueda de canales por nombre
+- ✅ **Sección de Eventos** con competiciones agrupadas (NBA, Copa Libertadores, etc.)
+- ✅ Búsqueda de eventos por competición, equipo o stream
+- ✅ Integración con API de eventos en vivo (pltvhd.com)
+- ✅ Badges de streams clicables que cargan el canal
 - ✅ Indicadores de estado EN VIVO / Offline
 - ✅ API REST completamente documentada (Swagger UI)
+- ✅ **Acceso remoto desde cualquier dispositivo** (TV, tablet, otra PC)
+- ✅ Panel administrativo para gestionar canales
 
 ## 🏗️ Arquitectura
 
@@ -36,11 +41,12 @@ localTv/
 ├── frontend/                   # Interfaz React + Vite
 │   ├── src/
 │   │   ├── components/        # Componentes React
-│   │   ├── pages/             # Páginas (Home, Admin)
+│   │   │   ├── SidebarWithTabs/
+│   │   │   ├── DailyEvents/   # NEW: Sección de eventos
+│   │   │   └── ...
+│   │   ├── pages/             # Páginas (Home, ChannelPage)
 │   │   ├── context/           # Context API
 │   │   ├── services/          # Servicios HTTP
-│   │   ├── hooks/             # Custom hooks
-│   │   ├── utils/             # Utilidades
 │   │   ├── App.jsx            # Componente raíz
 │   │   └── main.jsx           # Punto de entrada
 │   ├── package.json           # Dependencias Node
@@ -48,30 +54,29 @@ localTv/
 │   └── .env                   # Variables de entorno
 │
 ├── docker-compose.yml         # Orquestación Docker
-├── Dockerfile.backend         # Imagen Docker Backend
-├── Dockerfile.frontend        # Imagen Docker Frontend
 ├── scripts/
-│   └── start.sh              # Script de inicio
+│   └── start.sh              # Script de inicio (MEJORADO)
 ├── README.md                 # Este archivo
-└── CLAUDE.md                 # Notas de desarrollo
+├── CLAUDE.md                 # Notas de desarrollo
+└── LICENSE                   # MIT License
 ```
 
 ## 🛠️ Stack Tecnológico
 
 ### Frontend
-- **React 19.2.5** - Librería UI
-- **Vite 8.0.10** - Build tool y dev server
-- **React Router DOM 7.14.2** - Enrutamiento
-- **Clappr** - Reproductor de video HLS/DASH (opcional)
+- **React 19.2.5** - Librería UI moderna
+- **Vite 8.0.10** - Build tool ultra-rápido
+- **React Router DOM 7.14.2** - Enrutamiento cliente
+- **CSS Modules** - Estilos aislados por componente
 
 ### Backend
 - **FastAPI 0.111.0** - Framework web async
-- **Uvicorn 0.30.0** - Servidor ASGI
-- **SQLAlchemy 2.0.30** - ORM
-- **SQLite** - Base de datos
-- **Pydantic 2.7.0** - Validación de datos
+- **Uvicorn 0.30.0** - Servidor ASGI de alto rendimiento
+- **SQLAlchemy 2.0.30** - ORM para bases de datos
+- **SQLite** - Base de datos ligera
+- **Pydantic 2.7.0** - Validación de datos con tipos
 
-### DevOps
+### DevOps & Acceso Remoto
 - **Docker & Docker Compose** - Containerización
 - **Python 3.9+** - Runtime backend
 - **Node.js 18+** - Runtime frontend
@@ -86,8 +91,8 @@ localTv/
 ### 1. Clonar Repositorio
 
 ```bash
-git clone https://github.com/jobustamantedev/bustaTv.git
-cd bustaTv
+git clone https://github.com/jobustamantedev/localTv.git
+cd localTv
 ```
 
 ### 2. Instalación Backend
@@ -97,6 +102,7 @@ cd backend
 python -m venv venv
 source venv/bin/activate  # En Windows: venv\Scripts\activate
 pip install -r requirements.txt
+cd ..
 ```
 
 ### 3. Instalación Frontend
@@ -104,31 +110,45 @@ pip install -r requirements.txt
 ```bash
 cd frontend
 npm install
+cd ..
 ```
 
 ## 🚀 Ejecución
 
-### Opción 1: Script de Inicio (Recomendado)
+### ⭐ Opción 1: Script de Inicio (RECOMENDADO)
 
-Inicia backend y frontend simultáneamente desde la raíz del proyecto:
+Inicia backend y frontend automáticamente CON acceso remoto:
 
 ```bash
 bash scripts/start.sh
 ```
 
+**Salida esperada:**
+```
+✅ localTv está corriendo!
+
+📍 URLs de Acceso Local:
+   Frontend:    http://localhost:5173
+   Backend API: http://localhost:8000
+
+📍 URLs de Acceso Remoto (TV, otros dispositivos):
+   Frontend:    http://192.168.1.29:5173
+   Backend API: http://192.168.1.29:8000
+```
+
 ### Opción 2: Manual en Terminales Separadas
 
-**Terminal 1 - Backend:**
+**Terminal 1 - Backend (escucha en todas las interfaces):**
 ```bash
 cd backend
 source venv/bin/activate  # En Windows: venv\Scripts\activate
-uvicorn main:app --reload
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-**Terminal 2 - Frontend:**
+**Terminal 2 - Frontend (escucha en todas las interfaces):**
 ```bash
 cd frontend
-npm run dev
+npm run dev -- --host
 ```
 
 ### Opción 3: Docker Compose
@@ -139,44 +159,52 @@ docker-compose up
 
 ## 🌐 URLs de Acceso
 
-Una vez iniciado el proyecto:
+| Servicio | Local | Remoto | Descripción |
+|----------|-------|--------|-------------|
+| Frontend | http://localhost:5173 | http://`<TU_IP>`:5173 | Interfaz web principal |
+| Backend API | http://localhost:8000 | http://`<TU_IP>`:8000 | API REST |
+| API Docs | http://localhost:8000/docs | http://`<TU_IP>`:8000/docs | Documentación Swagger |
 
-| Servicio | URL | Descripción |
-|----------|-----|-------------|
-| Frontend | http://localhost:5173 | Interfaz web principal |
-| Backend API | http://localhost:8000 | API REST |
-| API Docs | http://localhost:8000/docs | Documentación Swagger UI |
-| Admin | http://localhost:5173/admin | Panel administrativo |
+> `<TU_IP>` es tu dirección IP local. El script `start.sh` la calcula automáticamente.
 
 ## 📖 Cómo Usar
 
-### Home (Página Principal)
+### 🏠 Página Principal
 
-1. Abre http://localhost:5173 en tu navegador
-2. Verás una lista de 10+ canales en vivo
-3. Usa los filtros para buscar por categoría:
-   - Filtro "Todos" - Muestra todos los canales
-   - Filtro "Deportes" - Solo canales deportivos
-   - Filtro "Películas" - Solo películas
-   - Otros filtros disponibles
-4. Haz clic en un canal para ver sus detalles
-5. Los indicadores muestran:
-   - 🔴 EN VIVO - Canal transmitiendo
-   - ⚪ Offline - Canal no disponible
+1. Abre http://localhost:5173 (o la URL remota desde tu TV)
+2. Verás el reproductor de video en el centro
+3. A la derecha hay un **sidebar con dos tabs**:
 
-### Panel Administrativo
+#### Tab "Canales" 📺
+- Lista de todos los canales disponibles (100+)
+- **Barra de búsqueda** para filtrar por nombre
+- Haz clic en un canal para reproducirlo
+- El título del canal se muestra arriba del video
+- El indicador **🔴 EN VIVO** se muestra abajo
+
+#### Tab "Eventos" 🎥 **(NUEVO)**
+- Eventos deportivos del día agrupados por **competición** (NBA, Copa Libertadores, etc.)
+- Logo de cada competición visible
+- **Barra de búsqueda** para encontrar eventos
+- Busca por:
+  - Nombre de la competición
+  - Descripción del evento (equipos, participantes)
+  - Nombre del stream (ESPN, Fox Sports, etc.)
+- **Haz clic en los badges** de streams para cargar ese canal automáticamente
+- Horarios de los eventos mostrados
+
+### 🔧 Panel Administrativo
 
 1. Navega a http://localhost:5173/admin
-2. Se te pedirá una clave API (API Key)
-3. Ingresa: `bustatv-dev-secret-key-changeme`
-4. En el panel administrativo puedes:
+2. Ingresa la API Key: `bustatv-dev-secret-key-changeme`
+3. Puedes:
    - **Ver tabla** de todos los canales
    - **Crear canal** nuevo
-   - **Editar canal** (nombre, URL, categoría)
-   - **Activar/Desactivar** canal (toggle on/off)
+   - **Editar canal** (nombre, URL, categoría, estado)
+   - **Activar/Desactivar** canal
    - **Eliminar canal**
 
-### API REST
+### 📡 API REST
 
 Algunos endpoints útiles:
 
@@ -191,24 +219,58 @@ curl http://localhost:8000/api/channels
 curl http://localhost:8000/api/categories
 
 # Ver documentación interactiva
-open http://localhost:8000/docs
+open http://localhost:8000/docs  # macOS
+# o en Windows/Linux: abre http://localhost:8000/docs en tu navegador
 ```
+
+## 🖥️ Acceso Remoto desde TV
+
+### Paso 1: Ejecutar el servidor
+
+```bash
+bash scripts/start.sh
+```
+
+El script te mostrará la IP local automáticamente:
+
+```
+📍 URLs de Acceso Remoto (TV, otros dispositivos):
+   Frontend:    http://192.168.1.29:5173
+```
+
+### Paso 2: Acceder desde la TV
+
+1. En tu Smart TV, abre el navegador web
+2. Escribe: `http://192.168.1.29:5173` (usa tu IP)
+3. La app cargará completamente
+
+### ⚠️ Si no funciona:
+- Verifica que tu TV y PC están en la **misma red WiFi**
+- Verifica la IP: es la que muestra el script `start.sh`
+- Si el backend da error "fetch failed":
+  - Asegúrate de que `--host 0.0.0.0` está activo en el backend
+  - Reinicia con el script `start.sh`
 
 ## 🧪 Testing Manual E2E
 
 Después de ejecutar `bash scripts/start.sh`:
 
-### Frontend Checks
+### ✅ Frontend Checks
 
-- [ ] Navbar rojo aparece en la parte superior
-- [ ] Título "bustaTv" visible
-- [ ] Lista de 10+ canales se carga
-- [ ] Al hacer clic en un canal (ej. ESPN), cambia la selección
-- [ ] Filtros funcionan (clic en "Deportes", "Todos")
-- [ ] Indicadores 🔴 EN VIVO y ⚪ Offline son correctos
+- [ ] Frontend carga sin navbar (sin logo ni menú arriba)
+- [ ] Titulo del canal visible arriba del video (centrado)
+- [ ] Video player centrado en la pantalla
+- [ ] "🔴 EN VIVO" visible abajo del video (centrado)
+- [ ] Sidebar derecho con dos tabs: "Canales" y "Eventos"
+- [ ] Al hacer clic en "Canales" → muestra lista de canales
+- [ ] Al hacer clic en "Eventos" → muestra eventos agrupados por competición
+- [ ] Búsqueda en "Canales" filtra por nombre
+- [ ] Búsqueda en "Eventos" filtra por competición/equipo/stream
+- [ ] Al hacer clic en un canal → reproduce
+- [ ] Al hacer clic en un badge de stream en eventos → carga el canal
 - [ ] Layout es responsive (prueba con DevTools mobile)
 
-### Admin Panel Checks
+### ✅ Admin Panel Checks
 
 - [ ] Ir a /admin → se pide API key
 - [ ] Ingresar: `bustatv-dev-secret-key-changeme`
@@ -218,7 +280,7 @@ Después de ejecutar `bash scripts/start.sh`:
 - [ ] Toggle on/off activa/desactiva canales
 - [ ] Botón eliminar funciona
 
-### Backend Checks
+### ✅ Backend Checks
 
 ```bash
 # Health endpoint
@@ -233,19 +295,20 @@ curl http://localhost:8000/api/channels
 # Accede a http://localhost:8000/docs
 ```
 
-### Console & Network Checks (DevTools)
+### ✅ Acceso Remoto Checks
 
-- [ ] Console tab: SIN errores rojos
-- [ ] Network tab: requests exitosos (200, 201, 204)
-- [ ] Network tab: SIN requests fallidas (4xx, 5xx)
-- [ ] Backend logs: SIN errores o excepciones
+- [ ] Desde TV/otro dispositivo: http://`<IP>`:5173 carga la app
+- [ ] Desde TV: Los canales se cargan sin errores
+- [ ] Desde TV: Los eventos se cargan sin errores
+- [ ] Desde TV: Puedo hacer clic en canales y eventos
+- [ ] Console (DevTools): SIN errores de "fetch failed"
 
 ## 📝 Variables de Entorno
 
 ### Backend (`.env`)
 
 ```
-DATABASE_URL=sqlite:///./bustaTv.db
+DATABASE_URL=sqlite:///./localTv.db
 SECRET_API_KEY=bustatv-dev-secret-key-changeme
 ```
 
@@ -255,16 +318,19 @@ SECRET_API_KEY=bustatv-dev-secret-key-changeme
 VITE_API_URL=http://localhost:8000
 ```
 
+> **Nota:** Con acceso remoto, la URL se detecta automáticamente.
+
 ## 🔒 Nota sobre Seguridad
 
 Este proyecto está en desarrollo. Para producción:
 
 - [ ] Cambiar `SECRET_API_KEY` a algo seguro
-- [ ] Configurar CORS adecuadamente
+- [ ] Configurar CORS según dominio específico
 - [ ] Usar HTTPS
 - [ ] Implementar autenticación con tokens JWT
 - [ ] Validar y sanitizar todas las entradas
 - [ ] Usar variables de entorno seguras
+- [ ] No exponer la API a internet sin autenticación
 
 ## ⚠️ Notas Legales
 
@@ -296,11 +362,12 @@ MIT License - Ver LICENSE para detalles
 
 ## 🔗 Enlaces
 
-- [GitHub](https://github.com/jobustamantedev/bustaTv)
+- [GitHub](https://github.com/jobustamantedev/localTv)
 - [Documentación de Desarrollo](./CLAUDE.md)
 - [Especificaciones](./specs)
 
 ---
 
 **Última actualización**: Abril 2026  
-**Versión**: 1.0.0 - Fase 5: Integración y Pruebas Completada
+**Versión**: 2.0.0 - Eventos integrados + Acceso remoto  
+**Estado**: Fase 6: Optimización y acceso remoto completado
