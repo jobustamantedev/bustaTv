@@ -30,22 +30,41 @@
 }
 
 .liveIndicator {
-  font-size: 0.75rem;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
-.liveBadge {
-  color: #CC0000;
+.online {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #00CC00;
+  box-shadow: 0 0 6px rgba(0, 204, 0, 0.6);
   animation: pulse 2s infinite;
+  display: block;
 }
 
-.offlineBadge {
-  color: #606060;
+.offline {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #CC0000;
+  display: block;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 6px rgba(0, 204, 0, 0.6);
+  }
+  50% {
+    opacity: 0.6;
+    box-shadow: 0 0 3px rgba(0, 204, 0, 0.3);
+  }
 }
 
 .logo {
@@ -59,4 +78,33 @@
   flex: 1;
   text-align: left;
   font-weight: 500;
+}
+
+.favoriteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.favoriteBtn:hover {
+  color: #ffd700;
+  transform: scale(1.2);
+}
+
+.favoriteBtn.favoriteActive {
+  color: #ffd700;
+}
+
+.card:hover .favoriteBtn {
+  opacity: 1;
 }

@@ -1,29 +1,32 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ChannelProvider } from './context/ChannelContext';
-import Navbar from './components/Navbar/Navbar';
+import { FavoritesProvider } from './context/FavoritesContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
+import ChannelPage from './pages/ChannelPage';
 import AdminLogin from './pages/Admin/AdminLogin';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 
 export default function App() {
   return (
-    <ChannelProvider>
-      <BrowserRouter>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<AdminLogin />} />
-          <Route
-            path="/admin/dashboard"
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </ChannelProvider>
+    <FavoritesProvider>
+      <ChannelProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/channel/:channelId" element={<ChannelPage />} />
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </ChannelProvider>
+    </FavoritesProvider>
   );
 }

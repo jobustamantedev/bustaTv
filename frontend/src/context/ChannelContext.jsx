@@ -8,6 +8,7 @@ export function ChannelProvider({ children }) {
   const [categories, setCategories] = useState([]);
   const [currentChannel, setCurrentChannel] = useState(null);
   const [activeCategory, setActiveCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -33,12 +34,15 @@ export function ChannelProvider({ children }) {
       });
   }, []);
 
-  // Filtrar canales por categoría
-  const filteredChannels = activeCategory === 'all'
+  // Filtrar canales por categoría y búsqueda
+  const filteredChannels = (activeCategory === 'all'
     ? channels.filter(ch => ch.is_active)
     : channels.filter(ch =>
         ch.category_id === activeCategory && ch.is_active
-      );
+      )
+  ).filter(ch =>
+    ch.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const value = {
     channels,
@@ -47,6 +51,8 @@ export function ChannelProvider({ children }) {
     setCurrentChannel,
     activeCategory,
     setActiveCategory,
+    searchQuery,
+    setSearchQuery,
     filteredChannels,
     loading,
     error,

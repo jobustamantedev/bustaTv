@@ -17,7 +17,7 @@ def get_channels(
         from app.models.category import Category
         query = query.join(Category).filter(Category.slug == category_slug)
 
-    return query.all()
+    return query.order_by(Channel.name).all()
 
 def get_channel(db: Session, channel_id: int):
     return db.query(Channel).filter(Channel.id == channel_id).first()

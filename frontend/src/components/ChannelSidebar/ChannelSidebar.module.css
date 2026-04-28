@@ -13,6 +13,68 @@
   font-weight: bold;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
+  position: sticky;
+  top: 0;
+  background: var(--bg-secondary);
+  padding-bottom: 0.5rem;
+  z-index: 10;
+}
+
+.searchInput {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color, #444);
+  border-radius: 5px;
+  background: var(--bg-primary, #1a1a1a);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  position: sticky;
+  top: 2.5rem;
+  z-index: 10;
+}
+
+.searchInput::placeholder {
+  color: var(--text-muted, #888);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+}
+
+.favoritesSection {
+  padding: 0.75rem 0;
+}
+
+.favoritesTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #999;
+  margin: 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.allChannelsTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #999;
+  margin: 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.listFavorites {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #444, transparent);
+  margin: 0.5rem 0;
 }
 
 .list {

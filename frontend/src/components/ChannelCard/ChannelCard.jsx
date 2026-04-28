@@ -1,6 +1,11 @@
 import styles from './ChannelCard.module.css';
 
-export default function ChannelCard({ channel, isSelected, onSelect }) {
+export default function ChannelCard({ channel, isSelected, onSelect, isFavorite, onToggleFavorite }) {
+  const handleFavoriteClick = (e) => {
+    e.stopPropagation();
+    onToggleFavorite?.(channel.id);
+  };
+
   return (
     <button
       className={`${styles.card} ${isSelected ? styles.selected : ''}`}
@@ -9,15 +14,18 @@ export default function ChannelCard({ channel, isSelected, onSelect }) {
     >
       <div className={styles.content}>
         <div className={styles.liveIndicator}>
-          {channel.is_active ? (
-            <span className={styles.liveBadge}>EN VIVO</span>
-          ) : (
-            <span className={styles.offlineBadge}>Offline</span>
-          )}
+          <span className={channel.is_active ? styles.online : styles.offline}></span>
         </div>
         <div className={styles.name}>{channel.name}</div>
-        {channel.logo_url && (
-          <img src={channel.logo_url} alt={channel.name} className={styles.logo} />
+        {onToggleFavorite && (
+          <button
+            className={`${styles.favoriteBtn} ${isFavorite ? styles.favoriteActive : ''}`}
+            onClick={handleFavoriteClick}
+            title={isFavorite ? 'Remover de favoritos' : 'Agregar a favoritos'}
+            aria-label={isFavorite ? 'Remover de favoritos' : 'Agregar a favoritos'}
+          >
+            ★
+          </button>
         )}
       </div>
     </button>
