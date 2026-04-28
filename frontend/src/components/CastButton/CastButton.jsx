@@ -4,16 +4,35 @@ import styles from './CastButton.module.css';
 export default function CastButton({ streamUrl, channelName, logoUrl, loading = false }) {
   const { isAvailable, isCasting, startCasting, stopCasting } = useChromecast();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (isCasting) {
       stopCasting();
-    } else if (streamUrl) {
-      startCasting(streamUrl, channelName, logoUrl);
+    } else if (streamUrl && window.chrome?.cast) {
+      try {
+        // Mostrar device picker
+        window.chrome.cast.requestSession(
+          async (session) => {
+            console.log('📺 Dispositivo seleccionado, iniciando transmisión...');
+            try {
+              await startCasting(streamUrl, channelName, logoUrl, session);
+            } catch (error) {
+              console.error('Error en casting:', error);
+            }
+          },
+          (error) => {
+            if (error.code !== 'SESSION_ERROR') {
+              console.error('❌ Error seleccionando dispositivo:', error);
+            }
+          }
+        );
+      } catch (e) {
+        console.error('❌ Error abriendo device picker:', e);
+      }
     }
   };
 
   if (!isAvailable) {
-    return null; // Cast no disponible
+    return null; // Cast no disponible, no mostrar botón
   }
 
   return (
