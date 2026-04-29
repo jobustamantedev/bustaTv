@@ -1,6 +1,9 @@
 import re
+import os
 import httpx
+from urllib.parse import quote, unquote
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import Response, StreamingResponse
 
 router = APIRouter(prefix="/api/streams", tags=["streams"])
 
@@ -8,6 +11,8 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     "Referer": "https://tvtvhd.com/",
 }
+
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
 async def get_stream_url(channel_slug: str) -> str:
     """Extrae la URL real del stream desde tvtvhd.com"""
@@ -47,20 +52,80 @@ async def get_stream_url(channel_slug: str) -> str:
 
 @router.get("/{channel_slug}")
 async def get_stream(channel_slug: str):
-    """Obtiene la URL del stream para un canal específico"""
+    """Obtiene la URL proxy del stream para un canal específico"""
     try:
-        stream_url = await get_stream_url(channel_slug)
+        # Verificar que el slug sea válido (intenta extraer la URL real)
+        _ = await get_stream_url(channel_slug)
 
-        # Retornar URL con headers necesarios para reproducción
+        # Devolver la URL del proxy en lugar de la URL real
         return {
-            "url": stream_url,
+            "url": f"{BACKEND_URL}/api/streams/proxy/{channel_slug}",
             "channel": channel_slug,
-            "headers": {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-                "Referer": "https://tvtvhd.com/"
-            }
         }
     except HTTPException as e:
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@router.get("/proxy/{channel_slug}")
+async def stream_proxy(channel_slug: str):
+    """Proxy del m3u8: descarga y reescribe URLs de segmentos para pasar por el backend"""
+    try:
+        # Obtener la URL real del m3u8
+        m3u8_url = await get_stream_url(channel_slug)
+
+        # Descargar el contenido del m3u8
+        async with httpx.AsyncClient(timeout=10, headers=HEADERS, follow_redirects=True) as client:
+            response = await client.get(m3u8_url)
+            m3u8_content = response.text
+
+        # Reescribir las URLs de segmentos para que pasen por el proxy del backend
+        # Buscar líneas que sean URLs de segmentos (.ts, .m4s, etc.)
+        lines = m3u8_content.split('\n')
+        rewritten_lines = []
+
+        for line in lines:
+            # Si la línea es una URL absoluta de segmento, reescribirla
+            if line.startswith('http') and ('.ts' in line or '.m4s' in line or '.mp4' in line):
+                # Encodear la URL del segmento para pasar como query param
+                encoded_url = quote(line, safe='')
+                proxy_url = f"{BACKEND_URL}/api/streams/segment?url={encoded_url}"
+                rewritten_lines.append(proxy_url)
+            else:
+                # Mantener la línea original (comentarios, líneas de configuración, URLs relativas, etc.)
+                rewritten_lines.append(line)
+
+        rewritten_m3u8 = '\n'.join(rewritten_lines)
+
+        # Devolver el m3u8 reescrito
+        return Response(content=rewritten_m3u8, media_type="application/vnd.apple.mpegurl")
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error en proxy m3u8: {str(e)}")
+
+@router.get("/segment")
+async def stream_segment(url: str):
+    """Proxy de segmentos HLS: descarga el segmento y hace streaming al cliente"""
+    try:
+        # Decodear la URL del segmento
+        segment_url = unquote(url)
+
+        # Descargar el segmento con headers spoofed
+        async with httpx.AsyncClient(timeout=30, headers=HEADERS, follow_redirects=True) as client:
+            async with client.stream("GET", segment_url) as response:
+                if response.status_code != 200:
+                    raise HTTPException(status_code=response.status_code, detail="Error descargando segmento")
+
+                # Hacer streaming del contenido al cliente
+                return StreamingResponse(
+                    response.aiter_bytes(),
+                    media_type="video/MP2T",
+                    headers={"Cache-Control": "public, max-age=3600"}
+                )
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error en proxy de segmento: {str(e)}")
